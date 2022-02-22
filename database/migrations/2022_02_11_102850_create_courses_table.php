@@ -16,12 +16,13 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('description');
-            $table->bigInteger('instructor_id')->unsigned();
+            $table->string('slug')->unique();
+            $table->text('description');
+            $table->foreignId('facilitator_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('course_category_id');
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
-            $table->foreign('instructor_id')->references('id')->on('users');
-            $table->enum('status', ['enabled', 'disabled'])->default('enabled');
+            $table->enum('status', ['published', 'unpublished', 'draft'])->default('published');
             $table->timestamps();
         });
     }

@@ -20,7 +20,9 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'firstname',
+        'secondname',
         'lastname',
+        'username',
         'email',
         'password',
     ];
@@ -49,33 +51,33 @@ class User extends Authenticatable
     }
 
     public function getFullNameAttribute() {
-        return trim($this->name . ' ' . $this->second_name . ' ' . $this->surname);
+        return trim($this->firstname . ' ' . $this->secondname . ' ' . $this->lastname);
     }
 
     public function role() {
         return $this->belongsTo('App\Role');
     }
 
-    public function scopeLearners($query) {
-        return $query->where(['role_id' => 3]);
-    }
-    public function scopeFacilitator($query) {
-        return $query->where(['role_id' => 2]);
-    }
-
-    public function scopeStudents($query) {
-        return $this->scopeLearners($query);
-    }
-
-    public function qualification(){
-        return $this->hasOneThrough(Qualification::class, QualificationStudent::class, 'user_id', 'id', null, 'qualification_id');
-    }
-
-    public function qualifications(){
-        return $this->hasManyThrough(Qualification::class, QualificationStudent::class, 'user_id', 'id', null, 'qualification_id');
-    }
-
-    public function facilitating() {
-        return $this->hasManyThrough(Qualification::class, QualificationStudent::class, 'facilitator_id', 'id', null, 'qualification_id');
-    }
+//    public function scopeLearners($query) {
+//        return $query->where(['role_id' => 3]);
+//    }
+//    public function scopeFacilitator($query) {
+//        return $query->where(['role_id' => 2]);
+//    }
+//
+//    public function scopeStudents($query) {
+//        return $this->scopeLearners($query);
+//    }
+//
+//    public function qualification(){
+//        return $this->hasOneThrough(Qualification::class, QualificationStudent::class, 'user_id', 'id', null, 'qualification_id');
+//    }
+//
+//    public function qualifications(){
+//        return $this->hasManyThrough(Qualification::class, QualificationStudent::class, 'user_id', 'id', null, 'qualification_id');
+//    }
+//
+//    public function facilitating() {
+//        return $this->hasManyThrough(Qualification::class, QualificationStudent::class, 'facilitator_id', 'id', null, 'qualification_id');
+//    }
 }

@@ -6,5 +6,6 @@
             </li>
         </ul>
     </div>
-    &copy; 2022 <a href="https://www.zwinotech.co.za/" target="_blank">Zwino Technologies</a>. All Rights Reserved.
+
+    <p>&copy; {{date('Y')}} <a href="https://www.zwinotech.co.za/" target="_blank">Zwino Technologies</a>. All Rights Reserved.</p>
 </footer>

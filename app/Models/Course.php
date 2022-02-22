@@ -9,10 +9,9 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $table = 'posts';
+    protected $table = 'courses';
 
     protected $fillable = [
-        'user_id',
         'title',
         'description',
         'category',
@@ -23,15 +22,14 @@ class Course extends Model
         'lectures',
         'language',
         'duration',
-        'students',
     ];
 
     public function category() {
-        return $this->belongsTo('App\Models\CourseCategory');
+        return $this->belongsTo(CourseCategory::class);
     }
 
     public function user() {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo(User::class);
     }
 
     public function qualifications() {

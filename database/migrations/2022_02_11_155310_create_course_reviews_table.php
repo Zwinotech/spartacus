@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('course_reviews', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('course_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->integer('rating');
             $table->text('review');
-            $table->bigInteger('course_id')->unsigned();
             $table->timestamps();
-            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 

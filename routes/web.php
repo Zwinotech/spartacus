@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminUserController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,31 +14,15 @@ use App\Http\Controllers\AdminUserController;
 */
 
 Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+    return view('system.dashboard');
 });
 
-Route::get('/home', function () {
-    return view('system.admin.dashboard');
-});
-
-Route::get('/courses', function () {
-    return view('system.admin.courses.index');
-});
-
-Route::get('/users', function () {
-    return view('system.admin.users.index');
-});
-
-Route::get('/user/profile', function () {
-    return view('system.admin.user.profile.index');
-});
-
-//Route::get('/user/profile', [AdminUserController::class, 'show'])->name('profile');
-
-Route::get('/logout', [AdminUserController::class, 'Logout']);
-
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function() {
+Route::get('/dashboard', function () {
     return view('dashboard');
-})->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+Route::get('courses/create', function () {
+    return view('system.courses.create');
+});
 
 require __DIR__.'/auth.php';

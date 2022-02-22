@@ -51,7 +51,7 @@ class CourseController extends Controller
         $course = new Course();
         $this->_save($course, $validated);
 
-        return redirect()->route('courses.index')->with('notice', ['message' => 'Created course', 'state' => 'success']);
+        return redirect()->route('system.cources')->with('notice', ['message' => 'Created course', 'state' => 'success']);
     }
 
     private function _save($model, $validated)

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Permission;
 use Illuminate\Http\Request;
 
-class PermissionController extends Controller
+class PermissionsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +16,7 @@ class PermissionController extends Controller
     {
         $permissions = Permission::all();
 
-        return view('permissions.index', [
+        return view('system.permissions.index', [
             'permissions' => $permissions
         ]);
     }
@@ -28,7 +28,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return view('permissions.create');
+        return view('system.permissions.create');
     }
 
     /**
@@ -45,7 +45,7 @@ class PermissionController extends Controller
 
         Permission::create($request->only('name'));
 
-        return redirect()->route('permissions.index')
+        return redirect()->route('system.permissions.index')
             ->withSuccess(__('Permission created successfully.'));
     }
 
@@ -69,7 +69,7 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
-        return view('permissions.edit', [
+        return view('system.permissions.edit', [
             'permission' => $permission
         ]);
     }
@@ -89,7 +89,7 @@ class PermissionController extends Controller
 
         $permission->update($request->only('name'));
 
-        return redirect()->route('permissions.index')
+        return redirect()->route('system.permissions.index')
             ->withSuccess(__('Permission updated successfully.'));
     }
 
@@ -103,7 +103,7 @@ class PermissionController extends Controller
     {
         $permission->delete();
 
-        return redirect()->route('permissions.index')
+        return redirect()->route('system.permissions.index')
             ->withSuccess(__('Permission deleted successfully.'));
     }
 }

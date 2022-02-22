@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}">
 
     <title>@yield('title')</title>
 
@@ -16,7 +16,6 @@
     <!-- Style-->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/skin_color.css') }}">
-    {{ asset('assets/css/style.css') }}
 </head>
 
 <body class="hold-transition light-skin sidebar-mini theme-primary fixed">
@@ -49,7 +48,6 @@
 <script src="{{ asset('assets/vendor_components/moment/min/moment.min.js') }}"></script>
 <script src="{{ asset('assets/vendor_components/fullcalendar/fullcalendar.js') }}"></script>
 
-<!-- EduAdmin App -->
 <script src="{{ asset('assets/js/template.js') }}"></script>
 <script src="{{ asset('assets/js/pages/dashboard.js') }}"></script>
 <script src="{{ asset('assets/js/pages/calendar.js') }}"></script>
