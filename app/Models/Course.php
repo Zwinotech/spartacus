@@ -18,9 +18,8 @@ class Course extends Model
         'author',
         'price',
         'photo',
-        'level',
-        'lectures',
-        'language',
+        'video',
+        'difficulty',
         'duration',
     ];
 
