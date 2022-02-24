@@ -55,7 +55,7 @@ class CoursesController extends Controller
      */
     public function show($id)
     {
-
+        return Course::find($id);
     }
 
     /**

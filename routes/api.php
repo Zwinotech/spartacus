@@ -28,7 +28,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 // Public Routes
 Route::get('courses', [CoursesController::class, 'index']);
-Route::get('courses/{slug}', [CoursesController::class, 'show']);
+Route::get('courses/{id}', [CoursesController::class, 'show']);
 Route::get('courses/search/{title}', [CoursesController::class, 'search']);
 Route::get('courses/categories/{category}', function (CourseCategory $courseCategory) {
 });
