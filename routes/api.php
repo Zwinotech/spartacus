@@ -22,4 +22,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group( function () {
     Route::resource('courses', CoursesController::class);
 });
-Route::get('search/{key}', [CoursesController::class, 'search'])->middleware('auth:sanctum');
+
+//Route::get('courses/search/{title}', [CoursesController::class, 'search'])->middleware('auth:sanctum');
+
+// Public Routes
+Route::get('courses', [CoursesController::class, 'index']);
+Route::get('courses/{id}', [CoursesController::class, 'show']);
+Route::get('courses/search/{title}', [CoursesController::class, 'search']);

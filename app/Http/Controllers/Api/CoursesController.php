@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;
@@ -17,8 +16,7 @@ class CoursesController extends Controller
      */
     public function index()
     {
-        $courses = CourseResourse::all();
-        return $this->handleResponse(CourseResourse::collection($courses), 'Courses have been retrieved!');
+        return $courses = Course::all();
     }
 
     /**
@@ -39,16 +37,14 @@ class CoursesController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->all();
-        $validator = Validator::make($input, [
+        $request->validate([
             'title' => 'required',
-            'description' => 'required'
+            'slug' => 'required|unique',
+            'description' => 'required',
+            'price' => 'required',
         ]);
-        if($validator->fails()){
-            return $this->handleError($validator->errors());
-        }
-        $course = Course::create($input);
-        return $this->handleResponse(new CourseResourse($course), 'Course created!');
+
+        return Course::create($request->all());
     }
 
     /**
@@ -84,24 +80,11 @@ class CoursesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Course $course)
+    public function update(Request $request, $id)
     {
-        $input = $request->all();
-
-        $validator = Validator::make($input, [
-            'title' => 'required',
-            'description' => 'required'
-        ]);
-
-        if($validator->fails()){
-            return $this->handleError($validator->errors());
-        }
-
-        $course->title = $input['title'];
-        $course->description = $input['description'];
-        $course->save();
-
-        return $this->handleResponse(new CourseResource($course), 'Course successfully updated!');
+        $course = Course::find($id);
+        $course->update($request->all());
+        return $course;
     }
 
     /**
@@ -112,6 +95,17 @@ class CoursesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return Course::destroy($id);
+    }
+
+    /**
+     * Search courses.
+     *
+     * @param  str  $title
+     * @return \Illuminate\Http\Response
+     */
+    public function search($title)
+    {
+        return Course::where('title', 'like', '%'.$title.'%')->get();
     }
 }

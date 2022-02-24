@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description');
+            $table->decimal('price', 5, 2);
             $table->foreignId('facilitator_id')->constrained()->cascadeOnDelete();
             $table->foreignId('course_category_id');
             $table->timestamp('started_at')->nullable();

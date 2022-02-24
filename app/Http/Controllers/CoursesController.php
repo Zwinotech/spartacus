@@ -7,109 +7,144 @@ use Illuminate\Http\Request;
 
 class CoursesController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        $courses = Course::latest()->paginate(10);
+        $data = [
+            'courses' => Course::paginate(),
+        ];
 
-        return view('system.courses.index', compact('courses'));
+        return view('system.courses.index', $data);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
     {
-        return view('system.courses.create');
+        $data['stages'] = collect([]);
+
+        return view('system.courses.create', $data);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created course in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        Course::create(array_merge($request->only(
-            'title',
-            'description',
-            'category',
-            'price',
-            'photo',
-            'level',
-            'modules',
-            'duration',
-            'students'), [
-            'facilitator' => auth()->id()
-        ]));
+        $validated = $request->validate([
+            'title'         => 'string|required',
+            'slug'          => 'string|required|unique:courses,slug',
+            'description'   => 'string|required',
+            'price'         => 'required',
+            'graphic'       => 'string|required',
+            'video'         => 'string|required',
+            'difficulty'    => 'required',
+            'stage.*.name'  => 'required'
+        ]);
 
-        return redirect()->route('system.courses.index')
-            ->withSuccess(__('Course created successfully.'));
+        // Generate graphic name and URL
+        $graphic        = $request->file('graphic');
+        $generatedTitle = hexdec(uniqid()).'.'.$graphic->getClientOriginalExtension();
+        Image:make($graphic)->resize(512, 512)->save('uploads/courses/'.$generatedTitle);
+        $graphicUrl     = 'https://spartacus.test/uploads/courses/'.$generatedTitle;
+
+        $validated['stage'] = $request->stage;
+
+        $course = new Course();
+        $this->save($course, $validated);
+
+        return redirect()->route('system.courses')->with('notice', ['message' => 'Created course', 'state' => 'success']);
+    }
+
+    private function save($model, $validated)
+    {
+        $model->name = $validated['name'];
+        $course      = $model->save();
+        $touched     = [];
+        // fetch data
+        foreach ($validated['stage'] as $index => $stage) {
+            $courseStage            = CourseStage::where('id', $stage['id'])->firstOrNew();
+            $courseStage->course_id = $model->id;
+            $courseStage->name      = $stage['name'];
+            $courseStage->order     = $stage['order'] ?: $index + 1;
+            $courseStage->save();
+
+            $touched[] = $courseStage->id;
+        }
+
+        $model->stages()->get()->map(function ($stage) use ($touched){
+            if(!in_array($stage->id, $touched )) {
+                $stage->delete();
+            }
+        });
+
+        return $course;
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Course $course
+     * @param \App\Course $course
      * @return \Illuminate\Http\Response
      */
     public function show(Course $course)
     {
-        return view('system.courses.show', [
-            'course' => $course
-        ]);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Course $course
-     * @return \Illuminate\Http\Response
+     * @param \App\Course $course
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function edit(Course $course)
     {
-        return view('system.courses.edit', [
-            'courses' => $course
-        ]);
+        $data['course'] = $course;
+
+        return view('system.courses.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Course $course
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Course $course
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Course $course)
     {
-        $course->update($request->only(
-            'title',
-            'description',
-            'category',
-            'price',
-            'photo',
-            'level',
-            'modules',
-            'duration',
-            'students'));
+        $validated = $request->validate([
+            'name'         => 'required',
+            'stage.*.name' => 'required',
+        ]);
 
-        return redirect()->route('system.courses.index')
-            ->withSuccess(__('Course updated successfully.'));
+        $validated['stage'] = $request->stage;
+        $this->_save($course, $validated);
+
+        return redirect()->route('courses.index')->with('notice', ['message' => 'Updated course', 'state' => 'success']);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Course $course
+     * @param \App\Course $course
      * @return \Illuminate\Http\Response
      */
     public function destroy(Course $course)
     {
         $course->delete();
 
-        return redirect()->route('system.courses.index')
-            ->withSuccess(__('Course deleted successfully.'));
+        return $course;
     }
 }
