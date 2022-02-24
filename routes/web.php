@@ -17,11 +17,7 @@ use App\Http\Controllers\CourseController;
 
 Route::get('/', function () {
     return view('system.dashboard');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
+})->middleware('auth');
 
 Route::resource('courses',  CoursesController::class );
 Route::resource('course-category', CourseCategoryController::class);
