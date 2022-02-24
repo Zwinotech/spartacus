@@ -33,7 +33,7 @@
 
                         <ul class="treeview-menu">
                             <li><a href="/courses"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>List</a></li>
-                            <li><a href="#"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Create</a></li>
+                            <li><a href="{{route('courses.create')}}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Create</a></li>
                         </ul>
                     </li>
 

@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\CourseCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class CoursesController extends Controller
 {
@@ -29,8 +34,10 @@ class CoursesController extends Controller
     public function create()
     {
         $data['stages'] = collect([]);
+        $facilitator = Auth::user();
+        $courseCategories = CourseCategory::all();
 
-        return view('system.courses.create', $data);
+        return view('system.courses.create', compact('data','facilitator', 'courseCategories'));
     }
 
     /**
@@ -41,55 +48,54 @@ class CoursesController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+//        dd(request()->all());
+
+        $attributes = request()->validate([
             'title'         => 'string|required',
-            'slug'          => 'string|required|unique:courses,slug',
+            'slug'          => ['required', Rule::unique('courses', 'slug')],
             'description'   => 'string|required',
             'price'         => 'required',
-            'graphic'       => 'string|required',
-            'video'         => 'string|required',
+            'graphic'       => 'required|image',
+            'video'         => 'active_url|required',
             'difficulty'    => 'required',
-            'stage.*.name'  => 'required'
+            'runtime'       => 'string',
+            'course_category_id'   => ['required', Rule::exists('course_categories', 'id')],
         ]);
 
-        // Generate graphic name and URL
-        $graphic        = $request->file('graphic');
-        $generatedTitle = hexdec(uniqid()).'.'.$graphic->getClientOriginalExtension();
-        Image:make($graphic)->resize(512, 512)->save('uploads/courses/'.$generatedTitle);
-        $graphicUrl     = 'https://spartacus.test/uploads/courses/'.$generatedTitle;
+        $attributes['facilitator_id'] = Auth::id();
+        $attributes['graphic'] = request()->file('graphic')->store('graphics');
 
-        $validated['stage'] = $request->stage;
 
-        $course = new Course();
-        $this->save($course, $validated);
 
-        return redirect()->route('system.courses')->with('notice', ['message' => 'Created course', 'state' => 'success']);
+        Course::create($attributes);
+
+        return redirect()->route('/')->with('notice', ['message' => 'Created courses', 'state' => 'success']);
     }
 
-    private function save($model, $validated)
-    {
-        $model->name = $validated['name'];
-        $course      = $model->save();
-        $touched     = [];
-        // fetch data
-        foreach ($validated['stage'] as $index => $stage) {
-            $courseStage            = CourseStage::where('id', $stage['id'])->firstOrNew();
-            $courseStage->course_id = $model->id;
-            $courseStage->name      = $stage['name'];
-            $courseStage->order     = $stage['order'] ?: $index + 1;
-            $courseStage->save();
-
-            $touched[] = $courseStage->id;
-        }
-
-        $model->stages()->get()->map(function ($stage) use ($touched){
-            if(!in_array($stage->id, $touched )) {
-                $stage->delete();
-            }
-        });
-
-        return $course;
-    }
+//    private function save($model, $validated)
+//    {
+//        $model->name = $validated['name'];
+//        $course      = $model->save();
+//        $touched     = [];
+//        // fetch data
+//        foreach ($validated['stage'] as $index => $stage) {
+//            $courseStage            = CourseStage::where('id', $stage['id'])->firstOrNew();
+//            $courseStage->course_id = $model->id;
+//            $courseStage->name      = $stage['name'];
+//            $courseStage->order     = $stage['order'] ?: $index + 1;
+//            $courseStage->save();
+//
+//            $touched[] = $courseStage->id;
+//        }
+//
+//        $model->stages()->get()->map(function ($stage) use ($touched){
+//            if(!in_array($stage->id, $touched )) {
+//                $stage->delete();
+//            }
+//        });
+//
+//        return $course;
+//    }
 
     /**
      * Display the specified resource.

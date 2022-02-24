@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\CourseCategoryController;
+use App\Http\Controllers\CoursesController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\CourseController; 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,10 +21,10 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
-Route::get('courses/create', function () {
-    return view('system.courses.create');
 });
+
+Route::resource('courses',  CoursesController::class );
+Route::resource('course-category', CourseCategoryController::class);
+
 
 require __DIR__.'/auth.php';

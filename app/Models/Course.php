@@ -14,28 +14,32 @@ class Course extends Model
     protected $fillable = [
         'title',
         'description',
-        'category',
+        'slug',
+        'course_category_id',
         'author',
         'price',
-        'photo',
+        'graphic',
         'video',
         'difficulty',
-        'duration',
+        'runtime',
+        'status',
+        'facilitator_id'
+
     ];
 
     public function category() {
         return $this->belongsTo(CourseCategory::class);
     }
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function facilitator() {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function qualifications() {
-        return $this->hasManyThrough(Qualification::class, QualificationCourse::class, 'course_id', 'id', null, 'qualification_id');
-    }
+//    public function qualifications() {
+//        return $this->hasManyThrough(Qualification::class, QualificationCourse::class, 'course_id', 'id', null, 'qualification_id');
+//    }
 
-    public function stages() {
-        return $this->hasMany(CourseStage::class)->orderBy('order', 'asc');
-    }
+//    public function stages() {
+//        return $this->hasMany(CourseStage::class)->orderBy('order', 'asc');
+//    }
 }

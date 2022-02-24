@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Course;
+use App\Models\CourseCategory;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Validator;
 
-class CoursesController extends Controller
+class CourseCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +14,11 @@ class CoursesController extends Controller
      */
     public function index()
     {
-        return $courses = Course::all();
+        $categories = CourseCategory::with('children')->whereNull('parent_id')->get();
+
+        return view('system.courses.categories.index')->with([
+            'categories'  => $categories
+        ]);
     }
 
     /**
@@ -26,7 +28,7 @@ class CoursesController extends Controller
      */
     public function create()
     {
-
+        //
     }
 
     /**
@@ -37,14 +39,14 @@ class CoursesController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'slug' => 'required|unique',
-            'description' => 'required',
-            'price' => 'required',
+        $validatedData = $this->validate($request, [
+            'name'      => 'required|min:3|max:255|string',
+            'parent_id' => 'sometimes|nullable|numeric'
         ]);
 
-        return Course::create($request->all());
+        CourseCategory::create($validatedData);
+
+        return redirect()->route('system.courses.categories')->withSuccess('You have successfully created a Category!');
     }
 
     /**
@@ -55,7 +57,7 @@ class CoursesController extends Controller
      */
     public function show($id)
     {
-
+        //
     }
 
     /**
@@ -78,9 +80,7 @@ class CoursesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $course = Course::find($id);
-        $course->update($request->all());
-        return $course;
+        //
     }
 
     /**
@@ -91,17 +91,6 @@ class CoursesController extends Controller
      */
     public function destroy($id)
     {
-        return Course::destroy($id);
-    }
-
-    /**
-     * Search courses.
-     *
-     * @param  str  $title
-     * @return \Illuminate\Http\Response
-     */
-    public function search($title)
-    {
-        return Course::where('title', 'like', '%'.$title.'%')->get();
+        //
     }
 }

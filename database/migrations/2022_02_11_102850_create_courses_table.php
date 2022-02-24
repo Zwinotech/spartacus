@@ -19,8 +19,12 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description');
             $table->decimal('price', 5, 2);
-            $table->foreignId('facilitator_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('course_category_id');
+            $table->string('graphic');
+            $table->string('video');
+            $table->string('difficulty');
+            $table->string('runtime')->nullable();
+            $table->bigInteger('facilitator_id')->references('id')->on('users')->constrained()->cascadeOnDelete();
+            $table->bigInteger('course_category_id')->references('id')->on('course_categories')->constrained()->cascadeOnDelete();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
             $table->enum('status', ['published', 'unpublished', 'draft'])->default('published');

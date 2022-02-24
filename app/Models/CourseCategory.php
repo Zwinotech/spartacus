@@ -9,6 +9,16 @@ class CourseCategory extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'parent_id',
+        'name',
+        'slug'
+    ];
+
+    public function children()
+    {
+        return $this->hasMany('App\Models\CourseCategory', 'parent_id');
+    }
     public function courses() {
         return $this->hasMany(Course::class);
     }
