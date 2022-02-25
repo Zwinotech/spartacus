@@ -20,7 +20,7 @@ class Cors
         $IlluminateResponse = 'Illuminate\Http\Response';
         $SymfonyResponse = 'Symfony\Component\HttpFoundation\Response';
         $headers = [
-            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Origin' => 'https://skillspanda-psi.vercel.app',
             'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, PATCH, DELETE',
             'Access-Control-Allow-Headers' => 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Authorization , Access-Control-Request-Headers',
         ];
