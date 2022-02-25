@@ -18,7 +18,7 @@ class Cors
     {
         $response = $next($request);
         $IlluminateResponse = 'Illuminate\Http\Response';
-        $SymfonyResopnse = 'Symfony\Component\HttpFoundation\Response';
+        $SymfonyResponse = 'Symfony\Component\HttpFoundation\Response';
         $headers = [
             'Access-Control-Allow-Origin' => '*',
             'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, PATCH, DELETE',
@@ -32,7 +32,7 @@ class Cors
             return $response;
         }
 
-        if($response instanceof $SymfonyResopnse) {
+        if($response instanceof $SymfonyResponse) {
             foreach ($headers as $key => $value) {
                 $response->headers->set($key, $value);
             }
